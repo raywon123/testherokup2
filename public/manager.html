@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+    <meta charset="UTF-8">
+    <title>Home</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="row">
+
+
+
+            <!-- Most Recent Member Card -->
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <button class="btn btn-danger" id="logoff" type="submit">Logoff</button>
+                        <a href="/profile" class="btn btn-primary">
+                            <span class="fa"></span>Profile Page</a>
+                        <a href="/home" class="btn btn-primary">
+                            <span class="fa"></span>Home Page</a>
+                        <h2>Manager Page</h2>
+                        <p> Member Status:</p>
+                    </div>
+                    <div class="card-body" id="recent-member">
+                        <p class="status"></p>
+                        <h2 class="user-id-display"></h2>
+                        <p id="display"> </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <!-- LINK TO FIREBASE GOES HERE -->
+    <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase.js"></script>
+
+
+    <!-- Script -->
+    <script>
+
+        // Initialize Firebase -- copy from google given code
+        var config = {
+            apiKey: "AIzaSyDgn-905hKtc6ZBpMNOfQxkd26Rx54ZIZo",
+            authDomain: "automentor-f3b77.firebaseapp.com",
+            databaseURL: "https://automentor-f3b77.firebaseio.com",
+            projectId: "automentor-f3b77",
+            storageBucket: "automentor-f3b77.appspot.com",
+            messagingSenderId: "910011566568"
+        };
+        firebase.initializeApp(config);
+
+
+        // Global variable
+        let currentuser;
+
+        // sign off
+        $("#logoff").on("click", function (event) {
+            // Don't refresh the page!
+            event.preventDefault();
+
+            firebase.auth().signOut().then(function () {
+                console.log("sign off successful.");
+                window.location = 'login';
+            }, function (error) {
+                console.log(error);
+            });
+        });
+
+        // — checking if user loggin
+        firebase.auth().onAuthStateChanged(function (user) {
+            if (user) {
+                // User is signed in.
+                var displayName = user.displayName;
+                var email = user.email;
+                var emailVerified = user.emailVerified;
+                var photoURL = user.photoURL;
+                var isAnonymous = user.isAnonymous;
+                var uid = user.uid;
+                var providerData = user.providerData;
+
+                // to Global variable
+                currentuser = user.uid;
+
+                console.log("loggedin");
+                console.log(uid);
+                $(".status").text("Welcome. You are loggedin.");
+                $(".user-id-display").append(uid);
+
+                // -- sending token
+                user.getIdToken().then(function (data) {
+                    // Send Token to backend via HTTP
+                   
+                });
+
+
+            } else {
+                // User is signed out.
+                $(".status").text("You are not loggedin.");
+                console.log("not loggedin");
+            }
+        });
+
+
+
+
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,21 @@
+{
+  "development": {
+    "username": "testuser",
+    "password": "test123",
+    "database": "automentor_db",
+    "host": "192.168.1.12",
+    "port": 3306,
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "database_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "use_env_variable": "JAWSDB_URL",
+    "dialect": "mysql"
+  }
+}
