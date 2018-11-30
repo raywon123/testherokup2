@@ -4,33 +4,57 @@
 <head>
 
     <meta charset="UTF-8">
-    <title>Home</title>
-
-    <!-- Bootstrap -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+   <!-- bootstrap-->
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
-        crossorigin="anonymous">
+      crossorigin="anonymous">
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"></script>
+   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"></script>
+   <!-- jQuery CDN -->
+   <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+      crossorigin="anonymous"></script>
+   <!-- styling-->
+   <link rel="stylesheet" href="./assets/css/styles/styles.css">
+    <title>Jump-Start</title>
 
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
 </head>
 
 <body>
 
+    <nav class="navbar navbar-expand-lg navbar-light bg-dark">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01"
+           aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+           <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+            <a id="navbarName" class="navbar-brand" href="#">Manager Page</a>
+            <form class="form-inline my-2 my-lg-0" id="chatNavbarLogout">
+                <button class="btn btn-danger" id="logoff" type="submit">Logoff</button>
+                <a href="/profile" class="btn btn-primary">
+                    <span class="fa"></span>Profile Page</a>
+                <a href="/home" class="btn btn-primary">
+                    <span class="fa"></span>Home Page</a>
+                <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Log out</button>
+            </form>
+        </div>
+    </nav>
+
     <div class="container">
-
         <div class="row">
-
-
-
             <!-- Most Recent Member Card -->
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-header">
-                        <button class="btn btn-danger" id="logoff" type="submit">Logoff</button>
-                        <a href="/profile" class="btn btn-primary">
-                            <span class="fa"></span>Profile Page</a>
-                        <a href="/home" class="btn btn-primary">
-                            <span class="fa"></span>Home Page</a>
-                        <h2>Manager Page</h2>
                         <p> Member Status:</p>
                     </div>
                     <div class="card-body" id="recent-member">
@@ -43,13 +67,27 @@
         </div>
     </div>
 
-    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <!--id that will hold the first chart-->
+                <div id="chart">graph 1</div>
+                <button id="btn_refresh">REFRESH</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 text-center">
+                <!--id that will hold the second chart-->
+                <div id="chart2">graph 2</div>
+                <button id="btn_refresh">REFRESH</button>
+            </div>
+        </div>
+        </div>
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery.js"></script>
     <!-- LINK TO FIREBASE GOES HERE -->
     <script src="https://www.gstatic.com/firebasejs/5.5.3/firebase.js"></script>
-
 
     <!-- Script -->
     <script>
@@ -106,6 +144,9 @@
                 user.getIdToken().then(function (data) {
                     // Send Token to backend via HTTP
                    
+// IS THIS WHERE THE CHART STUFF HAS TO GO?
+
+
                 });
 
 
@@ -116,7 +157,127 @@
             }
         });
 
+// STUFF FOR CHARTS
 
+        // Load the Visualization API and the corechart package.
+        google.charts.load("current", {
+            // Set a callback to run when the Google Visualization API is loaded.
+            callback: init,
+            packages: ["corechart", "bar"]
+        })
+        $("#btn_refresh").click(function () {
+            init();
+        })
+
+        let processedData;
+        let processedData2;
+
+        function processData(data) {
+            let arr = new Array();
+            jQuery.each(data, function (index, object) {
+                arr.push(object["first_name"], parseInt(object["SUM(results.score)"]));
+            })
+            console.log("first array??")
+            console.log(arr);
+            return arr;
+        }
+
+        function processData2(data) {
+            let arr = new Array();
+            jQuery.each(data, function (index, object) {
+                arr.push(object["id"], parseInt(object["SUM(results.score)"]));
+            })
+            console.log("first array??")
+            console.log(arr);
+            return arr;
+        }
+
+        function init() {
+            $.get("/api/userscore", function(data) {
+                console.log(data);
+                processedData = processData(data);
+                console.log("THIS 1")
+                console.log(processedData);
+                drawChart(processedData);
+            });
+
+            $.get("/api/quizscore", function(data2) {
+                console.log(data2);
+                processedData2 = processData2(data2);
+                console.log("THIS 2")
+                console.log(processedData2);
+                drawChart2(processedData2);
+            });
+
+        }
+        // Callback that creates and populates a data table, instantiates the chart, passes in the data and draws it.
+        function drawChart(dataArray) {
+            // Create the data table.
+            let data = new google.visualization.DataTable();
+            console.log("made it! " + dataArray);
+            data.addColumn("string", "User Name");
+            data.addColumn("number", "Score on Test");
+            for (let i = 0; i < dataArray.length; i += 2) {
+                data.addRow([dataArray[i], dataArray[i + 1]]);
+            }  
+
+            // Set chart options
+            let options = {
+                title: "Scores on each Question",
+                height: 500,
+                chartArea: {width: '50%', height: '50%'},
+                colors: ['lightgray'],
+                hAxis: {
+                    title: "Score",
+                    minValue: 0
+                },
+                vAxis: {
+                    title: "Employee"
+                }
+            };
+
+                // Instantiate and draw our chart
+            let chart = new google.visualization.BarChart(document.getElementById('chart'));
+            chart.draw(data, options);
+        }
+
+
+    // -------------STUFF FOR SECOND GRAPH-----------------------------------------------
+
+    let stringnumber;
+
+        // Callback that creates and populates a data table, instantiates the chart, passes in the data and draws it.
+        function drawChart2(dataArray) {
+            // Create the data table.
+            let data = new google.visualization.DataTable();
+            console.log("made it! " + dataArray);
+            data.addColumn("string", "Question");
+            data.addColumn("number", "Number Correct");
+            for (let i = 0; i < dataArray.length; i += 2) {
+                stringnumber = dataArray[i].toString();
+                data.addRow([stringnumber, dataArray[i + 1]]);
+            }  
+
+                // Set chart options
+            let options = {
+                title: "Correct Answers Per Question",
+                height: 500,
+                chartArea: {width: '50%', height: '60%'},
+                colors: ['lightgray'],
+                hAxis: {
+                    title: "Number Correct",
+                    minValue: 0
+                },
+                vAxis: {
+                    title: "Question Number",
+                    minValue: 0
+                }
+            };
+
+                // Instantiate and draw our chart
+            let chart = new google.visualization.BarChart(document.getElementById('chart2'));
+            chart.draw(data, options);
+        }
 
 
 

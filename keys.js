@@ -1,7 +1,8 @@
-exports.mysql = {
-    "username": process.env.MYSQL_USER,
-    "password": process.env.MYSQL_PASSWD,
-    "database": process.env.MYSQL_DB,
-    "host": process.env.MYSQL_HOST,
-    "port": process.env.MYSQL_PORT,
+exports.dev = {
+    "username": process.env.DEV_USER,
+    "password": process.env.DEV_PASSWD,
+    "database": process.env.DEV_DB,
+    "host": process.env.DEV_HOST,
+    "port": process.env.DEV_PORT,
 }
+
