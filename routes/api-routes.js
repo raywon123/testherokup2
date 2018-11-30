@@ -23,10 +23,10 @@ let mysql_port = keys.dev.port;
 
 // Heroku env
 if (process.env.JAWSDB_URL) {
-   let str = process.env.JAWSDB_URL;
-   let arr = str.split("/");
-   let arr2 = arr[2].split(":");
-   let arr3 = arr2[1].split("@");
+    let str = process.env.JAWSDB_URL;
+    let arr = str.split("/");
+    let arr2 = arr[2].split(":");
+    let arr3 = arr2[1].split("@");
 
     mysql_database = arr[3];
     mysql_username = arr2[0];
@@ -100,10 +100,10 @@ module.exports = function (app) {
     });
 
     // GET - select one
-    app.get("/api/users/:id", function (req, res) {
+    app.get("/api/users/:email", function (req, res) {
 
         db.user
-            .findOne({ where: { id: req.params.id } }).then(result => res.json(result));
+            .findOne({ where: { email: req.params.email } }).then(result => res.json(result));
     });
 
 
@@ -116,15 +116,15 @@ module.exports = function (app) {
     });
 
     // PUT - update
-    app.put("/api/users/:id", function (req, res) {
+    app.put("/api/users/:email", function (req, res) {
         db.user
-            .update({ devoured: req.body.devoured }, { where: { id: req.params.id } }).then(results => res.json(results));
+            .update({ phone: req.body.phone }, { where: { email: req.params.email } }).then(results => res.json(results));
     });
 
     // DELETE delete 
-    app.delete("/api/users/:id", function (req, res) {
+    app.delete("/api/users/:email", function (req, res) {
         db.user
-            .destroy({ where: { id: req.params.id } }).then(results => res.json(results));
+            .destroy({ where: { email: req.params.email } }).then(results => res.json(results));
     });
 
     // ---- automentor api routes: quiz
@@ -155,7 +155,7 @@ module.exports = function (app) {
     // PUT - update
     app.put("/api/quizzes/:id", function (req, res) {
         db.quiz
-            .update({ devoured: req.body.devoured }, { where: { id: req.params.id } }).then(results => res.json(results));
+            .update({ question: req.body.question }, { where: { id: req.params.id } }).then(results => res.json(results));
     });
 
     // DELETE delete 
@@ -175,22 +175,28 @@ module.exports = function (app) {
 
     // GET - select one user's result
 
-    app.get("/api/results/:userid", function (req, res) {
+    app.get("/api/results/:email", function (req, res) {
 
-        db.result
-            .findAll({ where: { user_id: req.params.userid } }).then(result => res.json(result));
+        db.user
+            .findOne({ where: { email: req.params.email } }).then(data => {
+                db.result
+                    .findAll({ where: { user_id: data.id } }).then(result => res.json(result));
+            });
     });
 
 
-    app.get("/api/results/:userid/:quizid", function (req, res) {
+    app.get("/api/results/:email/:quizid", function (req, res) {
 
-        let whereStatement = {};
-        whereStatement.user_id = req.params.userid;
-        whereStatement.id = req.params.quizid;
+        db.user
+            .findOne({ where: { email: req.params.email } }).then(data => {
+                let whereStatement = {};
+                whereStatement.user_id = data.id;
+                whereStatement.quiz_id = req.params.quizid;
 
-        // Example of where clause
-        db.result
-            .findAll({ where: whereStatement }).then(result => res.json(result));
+                // Example of where clause
+                db.result
+                    .findAll({ where: whereStatement }).then(result => res.json(result));
+            });
     });
 
     app.get("/api/resultsbydate/:date", function (req, res) {
@@ -242,7 +248,7 @@ module.exports = function (app) {
     // PUT - update
     app.put("/api/results/:id", function (req, res) {
         db.result
-            .update({ devoured: req.body.devoured }, { where: { id: req.params.id } }).then(results => res.json(results));
+            .update({ score: req.body.score }, { where: { id: req.params.id } }).then(results => res.json(results));
     });
 
     // DELETE delete 
@@ -251,9 +257,18 @@ module.exports = function (app) {
             .destroy({ where: { id: req.params.id } }).then(results => res.json(results));
     });
 
-    // ---- automentor api routes: Charts
+    // ---- automentor api routes: other routes
 
-    // are my get(names) causing a problem?
+    // -- check if user is manager
+    app.get("/api/checkrole/:email", function (req, res) {
+
+        db.user
+            .findOne({ where: { email: req.params.email } }).then(data => {
+                db.role
+                    .findOne({ where: { id: data.permission_id } }).then(result => res.json(result));
+            });
+    });
+    // ---- automentor api routes: Charts
 
     // Function to collect data for FIRST Graph
     function getData(callback) {
